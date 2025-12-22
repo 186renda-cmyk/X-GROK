@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://x-grok.top/sitemap.xml
+Host: x-grok.top

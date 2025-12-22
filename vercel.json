@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    {
+      "source": "/go/grok-buy",
+      "destination": "https://www.naifeistation.com/index/buy?id=255&invite=3903",
+      "permanent": false
+    },
+    {
+      "source": "/go/grok-topup",
+      "destination": "https://www.naifeistation.com/index/buy?id=258&invite=3903",
+      "permanent": false
+    },
+    {
+      "source": "/go/grok-shared",
+      "destination": "https://www.naifeistation.com/index/buy?id=255&invite=3903",
+      "permanent": false
+    }
+  ]
+}
