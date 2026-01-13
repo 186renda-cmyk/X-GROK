@@ -361,5 +361,18 @@
       });
     });
   </script>
+  <script>
+    var menuBtn = document.getElementById('mobileMenuBtn');
+    var menuPanel = document.getElementById('mobileMenuPanel');
+    if(menuBtn && menuPanel){
+      menuBtn.addEventListener('click', function(){
+        if(menuPanel.classList.contains('hidden')){ menuPanel.classList.remove('hidden'); }
+        else { menuPanel.classList.add('hidden'); }
+      });
+      menuPanel.querySelectorAll('a').forEach(function(a){
+        a.addEventListener('click', function(){ menuPanel.classList.add('hidden'); });
+      });
+    }
+  </script>
 </body>
 </html>
