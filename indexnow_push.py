@@ -6,7 +6,7 @@ import json
 # 配置信息
 SITE_HOST = "x-grok.top"
 SITE_URL = f"https://{SITE_HOST}"
-API_KEY = "c415bee11d64c594fec05ec4c3581"
+API_KEY = "f94dfa96c01e49b0b577a4de08f3e121"
 KEY_LOCATION = f"{SITE_URL}/{API_KEY}.txt"
 API_URL = "https://api.indexnow.org/indexnow"
 SITEMAP_FILE = "sitemap.xml"
