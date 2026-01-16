@@ -6,21 +6,32 @@ import json
 # 配置信息
 SITE_HOST = "x-grok.top"
 SITE_URL = f"https://{SITE_HOST}"
-API_KEY = "f94dfa96c01e49b0b577a4de08f3e121"
+API_KEY = "3662fe1b8efb4b63a703c0edb1dac202"
 KEY_LOCATION = f"{SITE_URL}/{API_KEY}.txt"
 API_URL = "https://api.indexnow.org/indexnow"
-SITEMAP_FILE = "sitemap.xml"
+SITEMAP_URL = f"{SITE_URL}/sitemap.xml"
 
-def get_urls_from_sitemap(sitemap_path):
-    """从 sitemap.xml 提取所有 URL"""
+def get_urls_from_sitemap(sitemap_source):
+    """从 sitemap.xml 提取所有 URL (支持本地路径或远程 URL)"""
     urls = []
-    if not os.path.exists(sitemap_path):
-        print(f"错误: 找不到文件 {sitemap_path}")
-        return urls
+    print(f"正在尝试从 {sitemap_source} 获取 Sitemap...")
     
     try:
-        tree = ET.parse(sitemap_path)
-        root = tree.getroot()
+        if sitemap_source.startswith("http"):
+            response = requests.get(sitemap_source, timeout=10)
+            if response.status_code != 200:
+                print(f"远程获取失败: HTTP {response.status_code}")
+                return []
+            content = response.content
+            # 解析 XML
+            root = ET.fromstring(content)
+        else:
+            if not os.path.exists(sitemap_source):
+                print(f"错误: 找不到文件 {sitemap_source}")
+                return urls
+            tree = ET.parse(sitemap_source)
+            root = tree.getroot()
+
         # Sitemap namespace
         namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
         
@@ -81,7 +92,11 @@ if __name__ == "__main__":
     print(f"Host: {SITE_HOST}")
     print(f"Key Location: {KEY_LOCATION}")
     
-    target_urls = get_urls_from_sitemap(SITEMAP_FILE)
+    # 优先尝试远程获取，失败则尝试本地
+    target_urls = get_urls_from_sitemap(SITEMAP_URL)
+    if not target_urls:
+        print("远程获取失败或为空，尝试读取本地 sitemap.xml...")
+        target_urls = get_urls_from_sitemap("sitemap.xml")
     
     # 过滤掉非本站域名的 URL (以防万一)
     target_urls = [url for url in target_urls if SITE_HOST in url]
