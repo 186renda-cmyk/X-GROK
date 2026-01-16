@@ -7,6 +7,7 @@ SITE_URL = "https://x-grok.top"
 TOKEN = "MkpV4it8Aq1PaVbS"
 API_URL = f"http://data.zz.baidu.com/urls?site={SITE_URL}&token={TOKEN}"
 SITEMAP_FILE = "sitemap.xml"
+DAILY_LIMIT = 10  # 百度每日推送限额
 
 def get_urls_from_sitemap(sitemap_path):
     """从 sitemap.xml 提取所有 URL"""
@@ -56,14 +57,20 @@ def push_to_baidu(urls):
         result = response.json()
         print("-" * 30)
         print("百度推送结果:")
-        print(f"状态码: {response.status_code}")
-        print(f"成功推送: {result.get('success', 0)} 条")
-        print(f"剩余配额: {result.get('remain', '未知')} 条")
         
-        if 'not_same_site' in result:
-            print(f"非本站 URL (失败): {result['not_same_site']}")
-        if 'invalid' in result:
-            print(f"非法 URL (失败): {result['invalid']}")
+        if 'error' in result:
+            print(f"推送失败 (Error {result['error']}): {result.get('message', '未知错误')}")
+            if result.get('message') == 'over quota':
+                print("提示: 您的百度推送配额已用完，或该站点暂无配额。")
+        else:
+            print(f"状态码: {response.status_code}")
+            print(f"成功推送: {result.get('success', 0)} 条")
+            print(f"剩余配额: {result.get('remain', '未知')} 条")
+            
+            if 'not_same_site' in result:
+                print(f"非本站 URL (失败): {result['not_same_site']}")
+            if 'invalid' in result:
+                print(f"非法 URL (失败): {result['invalid']}")
             
         print("-" * 30)
         
@@ -73,6 +80,12 @@ def push_to_baidu(urls):
 if __name__ == "__main__":
     print("开始执行百度主动推送...")
     target_urls = get_urls_from_sitemap(SITEMAP_FILE)
+    
+    # 限制每日推送数量
+    if len(target_urls) > DAILY_LIMIT:
+        print(f"注意: URL 总数 ({len(target_urls)}) 超过每日限额 ({DAILY_LIMIT})")
+        print(f"已自动截取前 {DAILY_LIMIT} 条进行推送...")
+        target_urls = target_urls[:DAILY_LIMIT]
     
     # 也可以手动添加 URL (如果有 sitemap 没包含的)
     # target_urls.append("https://x-grok.top/new-page.html")
