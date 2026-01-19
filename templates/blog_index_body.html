@@ -1,0 +1,210 @@
+<div class="max-w-7xl mx-auto px-4 pt-32 pb-12">
+    <nav aria-label="Breadcrumb" class="mb-6">
+      <ol class="flex items-center space-x-2 text-sm text-slate-400" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="../" class="hover:text-gold transition-colors flex items-center gap-1" itemprop="item">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span itemprop="name">首页</span>
+          </a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <li aria-hidden="true" class="text-slate-600">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="./" class="text-white font-medium" aria-current="page" itemprop="item">
+            <span itemprop="name">教程</span>
+          </a>
+          <meta itemprop="position" content="2" />
+        </li>
+      </ol>
+    </nav>
+    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-6">Grok 教程导航与资源大全</h1>
+    <p class="text-slate-400 mb-8 text-lg max-w-3xl leading-relaxed">
+      这里汇集了关于 Grok AI 的全方位使用指南。无论您是需要 <a href="/blog/payment-guide" class="text-gold hover:underline">开通 X Premium</a>、了解 <a href="/blog/grok-free-limit-guide" class="text-gold hover:underline">Grok 4.0 免费额度</a>，还是探索 <a href="/blog/deepsearch-guide" class="text-gold hover:underline">DeepSearch 深度搜索</a> 的高级用法，都能在这里找到答案。
+    </p>
+    
+    <!-- Search Bar -->
+    <div class="relative max-w-lg mb-10">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <input type="text" id="search-input" class="block w-full pl-10 pr-3 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-transparent transition-all" placeholder="搜索教程...">
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap gap-3 mb-10 border-b border-white/10 pb-4">
+      <button class="category-btn active px-4 py-2 rounded-full text-sm font-medium transition-all bg-gold text-black hover:bg-gold/90" data-filter="all">全部文章</button>
+      <button class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-white/5 text-slate-300 hover:text-white hover:bg-white/10" data-filter="使用指南">使用指南</button>
+      <button class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-white/5 text-slate-300 hover:text-white hover:bg-white/10" data-filter="深度评测">深度评测</button>
+      <button class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-white/5 text-slate-300 hover:text-white hover:bg-white/10" data-filter="支付方案">支付方案</button>
+      <button class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-all bg-white/5 text-slate-300 hover:text-white hover:bg-white/10" data-filter="差异对比">差异对比</button>
+    </div>
+
+    <div id="article-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr min-h-[400px]">
+      {{ blog_grid }}
+    </div>
+    
+    <!-- Pagination Controls -->
+    <nav id="pagination-container" aria-label="Pagination" class="mt-12 flex justify-center items-center gap-3"></nav>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const grid = document.getElementById('article-grid');
+      if (!grid) return;
+      
+      const allArticles = Array.from(grid.children);
+      const itemsPerPage = 6;
+      let currentPage = 1;
+      let currentFilter = 'all';
+      let searchQuery = '';
+      let filteredArticles = [...allArticles];
+
+      // Search Functionality
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase();
+          currentPage = 1;
+          applyFilter();
+        });
+      }
+
+      // Category Filtering
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Update Active State
+          categoryBtns.forEach(b => {
+            b.classList.remove('bg-gold', 'text-black', 'hover:bg-gold/90');
+            b.classList.add('bg-white/5', 'text-slate-300', 'hover:text-white', 'hover:bg-white/10');
+          });
+          btn.classList.remove('bg-white/5', 'text-slate-300', 'hover:text-white', 'hover:bg-white/10');
+          btn.classList.add('bg-gold', 'text-black', 'hover:bg-gold/90');
+          
+          currentFilter = btn.getAttribute('data-filter');
+          currentPage = 1; // Reset to page 1
+          applyFilter();
+        });
+      });
+
+      function applyFilter() {
+        filteredArticles = allArticles.filter(article => {
+          const tag = article.getAttribute('data-category');
+          const title = article.querySelector('h2').textContent.toLowerCase();
+          const desc = article.querySelector('p').textContent.toLowerCase();
+          
+          const matchesCategory = currentFilter === 'all' || tag === currentFilter;
+          const matchesSearch = title.includes(searchQuery) || desc.includes(searchQuery);
+          
+          return matchesCategory && matchesSearch;
+        });
+        showPage(currentPage);
+      }
+
+      function showPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        
+        // First hide all
+        allArticles.forEach(article => {
+          article.classList.add('hidden');
+          article.classList.remove('animate-fade-in');
+        });
+
+        // Show filtered & paginated
+        const pageItems = filteredArticles.slice(start, end);
+        
+        if (pageItems.length === 0) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.id = 'empty-state';
+            emptyMsg.className = 'col-span-full text-center py-20 text-slate-500';
+            emptyMsg.innerHTML = '<div class="text-4xl mb-4">🔍</div><p>没有找到相关文章</p>';
+            if (!document.getElementById('empty-state')) grid.appendChild(emptyMsg);
+        } else {
+            const existingEmpty = document.getElementById('empty-state');
+            if (existingEmpty) existingEmpty.remove();
+        }
+
+        pageItems.forEach(article => {
+          article.classList.remove('hidden');
+          article.classList.add('animate-fade-in');
+        });
+        
+        renderPagination();
+        
+        // Scroll to top of grid if not first load
+        // if (window.scrollY > grid.offsetTop && page > 1) {
+        //    window.scrollTo({ top: grid.offsetTop - 100, behavior: 'smooth' });
+        // }
+      }
+
+      function renderPagination() {
+        const paginationContainer = document.getElementById('pagination-container');
+        paginationContainer.innerHTML = '';
+        
+        const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+        
+        if (totalPages <= 1) return;
+
+        // Previous Button
+        const prevBtn = document.createElement('button');
+        prevBtn.innerHTML = '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>';
+        prevBtn.className = `p-2 rounded-lg border border-white/10 transition-all ${currentPage === 1 ? 'text-slate-600 cursor-not-allowed' : 'text-slate-300 hover:text-gold hover:border-gold/30 hover:bg-white/5'}`;
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+          if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+            window.scrollTo({ top: grid.offsetTop - 100, behavior: 'smooth' });
+          }
+        };
+        paginationContainer.appendChild(prevBtn);
+
+        // Page Numbers
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement('button');
+          btn.textContent = i;
+          if (i === currentPage) {
+            btn.className = 'w-10 h-10 rounded-lg bg-gold text-black font-bold shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all';
+          } else {
+            btn.className = 'w-10 h-10 rounded-lg border border-white/10 text-slate-300 hover:text-gold hover:border-gold/30 hover:bg-white/5 transition-all';
+          }
+          btn.onclick = () => {
+            currentPage = i;
+            showPage(currentPage);
+            window.scrollTo({ top: grid.offsetTop - 100, behavior: 'smooth' });
+          };
+          paginationContainer.appendChild(btn);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.innerHTML = '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
+        nextBtn.className = `p-2 rounded-lg border border-white/10 transition-all ${currentPage === totalPages ? 'text-slate-600 cursor-not-allowed' : 'text-slate-300 hover:text-gold hover:border-gold/30 hover:bg-white/5'}`;
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+            window.scrollTo({ top: grid.offsetTop - 100, behavior: 'smooth' });
+          }
+        };
+        paginationContainer.appendChild(nextBtn);
+      }
+
+      // Initial render
+      showPage(currentPage);
+    });
+    </script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+  </style>
+</div>
