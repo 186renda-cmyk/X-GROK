@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 # 1. 基础配置
 SITE_URL = "https://x-grok.top"
 TEMPLATES_DIR = "templates"
-SOURCE_DIR = "blog_backup"
+SOURCE_DIR = "blog"
 DEST_DIR = "blog"
 OUTPUT_DIR = "." # Root directory
 VERSION = str(int(datetime.datetime.now().timestamp()))
@@ -54,14 +54,18 @@ def extract_metadata(filename):
     content = read_file(path)
     
     # Title
-    title_match = re.search(r'<title>(.*?)</title>', content)
+    title_match = re.search(r'<title>(.*?)</title>', content, re.DOTALL)
     if not title_match:
-        title_match = re.search(r'<h1.*?>(.*?)</h1>', content)
+        title_match = re.search(r'<h1.*?>(.*?)</h1>', content, re.DOTALL)
     title = title_match.group(1).split('|')[0].strip() if title_match else "Untitled"
     
     # Description
-    desc_match = re.search(r'<meta name="description" content="(.*?)">', content)
-    description = desc_match.group(1) if desc_match else ""
+    # Handle both orders and potential newlines
+    desc_match = re.search(r'<meta\s+(?:name="description"\s+content="([^"]*)"|content="([^"]*)"\s+name="description")', content, re.DOTALL)
+    if desc_match:
+        description = desc_match.group(1) if desc_match.group(1) else desc_match.group(2)
+    else:
+        description = ""
     
     # Date
     date_match = re.search(r'<time datetime="(.*?)">', content)
