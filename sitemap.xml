@@ -26,6 +26,18 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://x-grok.top/blog/grok-app-download-guide</loc>
+    <lastmod>2026-02-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://x-grok.top/blog/grok-developer-mode-guide</loc>
+    <lastmod>2026-02-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://x-grok.top/blog/grok-vs-chatgpt</loc>
     <lastmod>2026-01-30</lastmod>
     <changefreq>weekly</changefreq>
