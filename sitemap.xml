@@ -26,14 +26,26 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://x-grok.top/blog/grok-api-usage-guide</loc>
+    <lastmod>2026-02-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://x-grok.top/blog/grok-app-download-guide</loc>
-    <lastmod>2026-02-01</lastmod>
+    <lastmod>2026-02-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://x-grok.top/blog/grok-review-and-analysis</loc>
+    <lastmod>2026-02-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://x-grok.top/blog/grok-developer-mode-guide</loc>
-    <lastmod>2026-02-01</lastmod>
+    <lastmod>2026-02-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
